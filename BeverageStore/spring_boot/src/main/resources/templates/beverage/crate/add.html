@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="fragments/header :: header"></head>
+    <body>
+        <div th:replace="fragments/navigation-bar :: navigation-bar"></div>
+
+        <div th:if="${hasServerError == true}" class="alert alert-danger" role="alert">
+            Unexpected server error.
+        </div>
+
+        <div class="container">
+            <br>
+            <div class="row">
+                <div class="col-md-8 offset-md-2">
+                    <a th:href="@{/beverage/crate}">Return to crates</a>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-md-8 offset-md-2">
+                    <div class="card">
+                        <h3>Add New Crate</h3>
+                        <br>
+
+                        <form method="POST" th:action="@{/beverage/crate/add}" th:object="${crateDTO}">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="name">Name</label>
+                                        <input id="name" class="form-control" type="text" th:field="*{name}" />
+                                        <small class="form-text text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="bottle-id">Bottle</label>
+                                        <select class="form-control" th:field="*{bottleId}" id="bottle-id">
+                                            <option value="0" disabled selected>Select Bottle</option>
+                                            <option th:each="bottle : ${bottleDropdownListItems}" th:value="${bottle.id}" th:text="${bottle.label}"></option>
+                                        </select>
+                                        <small class="form-text text-danger" th:if="${#fields.hasErrors('bottleId')}" th:errors="*{bottleId}"></small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="pic-url">Picture URL</label>
+                                        <input id="pic-url" class="form-control" type="text" th:field="*{picUrl}" />
+                                        <small class="form-text text-danger" th:if="${#fields.hasErrors('picUrl')}" th:errors="*{picUrl}"></small>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="no-of-bottles">No. of Bottles</label>
+                                        <input id="no-of-bottles" class="form-control" type="number" step="1" th:field="*{noOfBottles}" />
+                                        <small class="form-text text-danger" th:if="${#fields.hasErrors('noOfBottles')}" th:errors="*{noOfBottles}"></small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="price">Price</label>
+                                        <div class="input-group">
+                                            <input id="price" class="form-control" type="number" step=".01" th:field="*{price}" />
+                                            <div class="input-group-append">
+                                                <span class="input-group-text">€</span>
+                                            </div>
+                                        </div>
+                                        <small class="form-text text-danger" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></small>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="in-stock">In Stock</label>
+                                        <input id="in-stock" class="form-control" type="number" step="1" th:field="*{inStock}" />
+                                        <small class="form-text text-danger" th:if="${#fields.hasErrors('inStock')}" th:errors="*{inStock}"></small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button class="btn btn-primary btn-block" type="submit">Add</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:replace="fragments/footer :: footer"></div>
+    </body>
+</html>

@@ -1,0 +1,170 @@
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+        <style>
+            .rw {
+                display: flex;
+                width: 100%;
+                margin: 10px 0 20px 0;
+            }
+
+            .col {
+                display: inline-block;
+            }
+
+            .box {
+                width: 350px;
+            }
+
+            .box p {
+                padding: 5px 10px;
+            }
+
+            .title {
+                font-size: 50px;
+            }
+
+            .box fieldset {
+                width: 100%;
+            }
+
+            .box fieldset legend {
+                font-weight: bold;
+            }
+
+            .field-title {
+                width: 100px;
+                font-weight: bold;
+                display: inline-block;
+            }
+
+            table {
+                border-spacing: 0;
+                -fs-table-paginate: paginate;
+            }
+
+            th, td {
+                padding: 5px;
+            }
+
+            th {
+                font-size: 20px;
+            }
+
+            @page {
+                @bottom-right {
+                    content: counter(page) "/" counter(pages);
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="rw">
+    <div style="width: 50%; display: inline;">
+        <span class="title">Beverage Store</span>
+    </div>
+    <div style="width: 50%; display: inline;">
+        <span class="title" style="float: right;">Invoice</span>
+    </div>
+</div>
+        <br></br>
+
+        <div class="rw">
+            <div class="col box" style="margin-right: 12px;">
+                <fieldset>
+                    <legend>Order Details</legend>
+                    <p>
+                        <span class="field-title">Order Number:</span>
+                        <span th:text="${invoice.orderNumber}"></span>
+                    </p>
+                    <p>
+                        <span class="field-title">Order Date:</span>
+                        <span th:text="${invoice.orderDate.month.name() + ' ' + invoice.orderDate.dayOfMonth + ', ' + invoice.orderDate.year}"></span>
+                    </p>
+                    <p>
+                        <span class="field-title">Total Price:</span>
+                        <span th:text="${#numbers.formatDecimal(invoice.totalPrice, 1, 'DEFAULT', 2, 'DEFAULT')}"></span>
+                    </p>
+                </fieldset>
+            </div>
+
+            <div class="col box">
+                <fieldset>
+                    <legend>Delivery Address</legend>
+                    <p>
+                        <span class="field-title">Street:</span>
+                        <span th:text="${invoice.deliveryAddress.street}"></span>
+                    </p>
+                    <p>
+                        <span class="field-title">House:</span>
+                        <span th:text="${invoice.deliveryAddress.houseNumber}"></span>
+                    </p>
+                    <p>
+                        <span class="field-title">Postal Code:</span>
+                        <span th:text="${invoice.deliveryAddress.postalCode}"></span>
+                    </p>
+                </fieldset>
+            </div>
+        </div>
+
+        <div class="rw">
+            <div class="col box" style="margin-right: 12px;">
+                <fieldset>
+                    <legend>Sold To</legend>
+                    <p>
+                        <span class="field-title">Name:</span>
+                        <span th:text="${invoice.customerName}"></span>
+                    </p>
+                    <p>
+                        <span class="field-title">Email:</span>
+                        <span th:text="${invoice.customerEmailId}"></span>
+                    </p>
+                    <p>
+                        <span class="field-title"></span>
+                    </p>
+                </fieldset>
+            </div>
+
+            <div class="col box">
+                <fieldset>
+                    <legend>Billing Address</legend>
+                    <p>
+                        <span class="field-title">Street:</span>
+                        <span th:text="${invoice.billingAddress.street}"></span>
+                    </p>
+                    <p>
+                        <span class="field-title">House:</span>
+                        <span th:text="${invoice.billingAddress.houseNumber}"></span>
+                    </p>
+                    <p>
+                        <span class="field-title">Postal Code:</span>
+                        <span th:text="${invoice.billingAddress.postalCode}"></span>
+                    </p>
+                </fieldset>
+            </div>
+        </div>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>Type</th>
+                    <th>Name</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="item : ${invoice.items}">
+                    <td><span th:text="${item.position}"></span></td>
+                    <td><span th:text="${item.type}"></span></td>
+                    <td><span th:text="${item.name}"></span></td>
+                    <td><span th:text="${item.quantity}"></span></td>
+                    <td><span th:text="${#numbers.formatDecimal(item.price, 1, 'DEFAULT', 2, 'DEFAULT')}"></span></td>
+                    <td><span th:text="${#numbers.formatDecimal(item.itemTotal, 1, 'DEFAULT', 2, 'DEFAULT')}"></span></td>
+                </tr>
+            </tbody>
+        </table>
+    </body>
+</html>

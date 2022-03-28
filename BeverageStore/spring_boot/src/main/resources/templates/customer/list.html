@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="fragments/header :: header"></head>
+    <body>
+        <div th:replace="fragments/navigation-bar :: navigation-bar"></div>
+
+        <div class="container">
+            <br>
+            <h2>Customer List</h2>
+            <br>
+
+            <div th:replace="fragments/pagination-control :: pagination-control(url = @{/customer}, currentPage = ${currentPage}, numberOfPages = ${numberOfPages})"></div>
+
+            <div id="cnt-tbl-customers">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col">UserName</th>
+                            <th scope="col">First Name</th>
+                            <th scope="col">Last Name</th>
+                            <th scope="col">Birth Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="customer : ${customers}">
+                            <td>
+                                <a th:text="${customer.username}" th:href="@{'/customer/' + ${customer.username}}"></a>
+                            </td>
+                            <td th:text="${customer.firstName}"></td>
+                            <td th:text="${customer.lastName}"></td>
+                            <td th:text="${#temporals.format(customer.birthday, 'dd MMM yyyy')}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div th:replace="fragments/footer :: footer"></div>
+    </body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+    <head th:replace="fragments/header :: header"></head>
+    <body>
+        <div th:replace="fragments/navigation-bar :: navigation-bar"></div>
+
+        <div th:replace="fragments/screen-blocker :: screen-blocker"></div>
+
+        <div class="container">
+            <br>
+            <h2>Crates</h2>
+            <br>
+            <a sec:authorize="hasRole(T(de.uniba.dsg.beverage_store.spring_boot.model.db.Role).ROLE_MANAGER.name())" th:href="@{/beverage/crate/add}">Add new crate</a>
+
+            <div th:replace="fragments/pagination-control :: pagination-control(url = @{/beverage/crate}, currentPage = ${currentPage}, numberOfPages = ${numberOfPages})"></div>
+
+            <div class="cnt-tbl-beverages">
+                <table id="tbl-crates" class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col">Image</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">No. of Bottles</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">In Stock</th>
+                            <th sec:authorize="hasRole(T(de.uniba.dsg.beverage_store.spring_boot.model.db.Role).ROLE_CUSTOMER.name())" scope="col">Quantity</th>
+                            <th scope="col">Action(s)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="crate : ${crates}"
+                            th:with="quantityAllowed = ${crate.allowedInStock < 5 ? crate.allowedInStock : 5}, isEmptyStock = ${crate.allowedInStock == 0}"
+                            th:attr="data-id=${crate.id}">
+                            <td>
+                                <img width="120" th:src="${crate.picUrl}">
+                            </td>
+                            <td th:text="${crate.name}"></td>
+                            <td th:text="${crate.noOfBottles}"></td>
+                            <td th:text="${#numbers.formatDecimal(crate.price, 1, 'DEFAULT', 2, 'DEFAULT')} + '€'"></td>
+                            <td class="txt-in-stock" th:text="${crate.allowedInStock}"></td>
+                            <td sec:authorize="hasRole(T(de.uniba.dsg.beverage_store.spring_boot.model.db.Role).ROLE_CUSTOMER.name())">
+                                <select class="form-control crateQuantity" th:disabled="${isEmptyStock}">
+                                    <option th:if="${!isEmptyStock}"
+                                            th:each="i : ${#numbers.sequence(1, quantityAllowed)}"
+                                            th:value="${i}"
+                                            th:text="${i}"></option>
+                                </select>
+                            </td>
+                            <td>
+                                <button type="button"
+                                        class="btn btn-primary btn-add-crate-stock"
+                                        sec:authorize="hasRole(T(de.uniba.dsg.beverage_store.spring_boot.model.db.Role).ROLE_MANAGER.name())"
+                                        th:attr="data-id=${crate.id}">Add Stock</button>
+
+                                <a class="btn btn-primary"
+                                   th:href="@{'/beverage/crate/edit/' + ${crate.id}}"
+                                   sec:authorize="hasRole(T(de.uniba.dsg.beverage_store.spring_boot.model.db.Role).ROLE_MANAGER.name())">Edit</a>
+
+                                <button type="button"
+                                        class="btn btn-primary btn-add-crate"
+                                        sec:authorize="hasRole(T(de.uniba.dsg.beverage_store.spring_boot.model.db.Role).ROLE_CUSTOMER.name())"
+                                        th:disabled="${isEmptyStock}"
+                                        th:attr="data-id=${crate.id}">Add To Cart</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div th:replace="fragments/footer :: footer"></div>
+    </body>
+
+    <script>
+        $('.btn-add-crate').click(function () {
+            let id = parseInt($(this).data('id'));
+            let quantity = parseInt($(this).closest('tr').find('.crateQuantity').val());
+
+            addItemToCart(id, quantity, false, (addedItem) => {
+                let allowedStock = addedItem.inStock - addedItem.quantity;
+                let allowedQuantity = allowedStock < 5 ? allowedStock : 5;
+
+                let crateTr = $('#tbl-crates tr[data-id="' + addedItem.beverageId +'"]');
+                let btnAddToCart = crateTr.find('.btn-add-crate');
+                let selectQuantity = crateTr.find('.crateQuantity');
+
+                crateTr.find('.txt-in-stock').text(allowedStock);
+
+                updateAllowedQuantity(allowedQuantity, selectQuantity, btnAddToCart);
+            });
+        });
+
+        $('.btn-add-crate-stock').click(function () {
+            let id = parseInt($(this).data('id'));
+
+            let quantity = prompt("Please enter the quantity");
+
+            if (quantity != null && isValidPositiveInteger(quantity))
+                addStockToBeverage(id, parseInt(quantity), false, (crate) => {
+                    let crateTr = $('#tbl-crates tr[data-id="' + id +'"]');
+
+                    crateTr.find('.txt-in-stock').text(crate.inStock);
+                });
+            else
+                alertify.error("Please enter a valid quantity.");
+        });
+    </script>
+</html>

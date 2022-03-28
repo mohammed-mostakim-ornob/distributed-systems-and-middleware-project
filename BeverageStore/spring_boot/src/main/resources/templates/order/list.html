@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+    <head th:replace="fragments/header :: header"></head>
+    <body>
+        <div th:replace="fragments/navigation-bar :: navigation-bar"></div>
+
+        <div th:replace="fragments/screen-blocker :: screen-blocker"></div>
+
+        <div class="container">
+            <br>
+            <h2>Order List</h2>
+            <br>
+
+            <div th:replace="fragments/pagination-control :: pagination-control(url = @{/order}, currentPage = ${currentPage}, numberOfPages = ${numberOfPages})"></div>
+
+            <div id="cnt-tbl-orders">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col">Order No.</th>
+                            <th scope="col">Total Price</th>
+                            <th scope="col">Date</th>
+                            <th scope="col"
+                                sec:authorize="hasRole(T(de.uniba.dsg.beverage_store.spring_boot.model.db.Role).ROLE_MANAGER.name())">Customer Name</th>
+                            <th scope="col">Action(s)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="order : ${orders}">
+                            <td>
+                                <a th:text="${order.orderNumber}" th:href="@{'/order/' + ${order.orderNumber}}"></a>
+                            </td>
+                            <td th:text="${#numbers.formatDecimal(order.price, 1, 'DEFAULT', 2, 'DEFAULT')} + '€'"></td>
+                            <td th:text="${#temporals.format(order.date, 'dd MMM yyyy')}"></td>
+                            <td sec:authorize="hasRole(T(de.uniba.dsg.beverage_store.spring_boot.model.db.Role).ROLE_MANAGER.name())">
+                                <a th:text="${order.user.firstName + ' ' +  order.user.lastName}"
+                                   th:href="@{'/customer/' + ${order.user.username}}"></a>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-primary btn-regenerate-invoice" th:attr="data-order-number=${order.orderNumber}">Regenerate Invoice</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div th:replace="fragments/footer :: footer"></div>
+    </body>
+
+    <script>
+        $('.btn-regenerate-invoice').click(function () {
+            regenerateInvoice($(this).data('order-number'));
+        });
+    </script>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="fragments/header :: header"></head>
+    <body>
+        <div th:replace="fragments/navigation-bar :: navigation-bar"></div>
+
+        <div th:replace="fragments/screen-blocker :: screen-blocker"></div>
+
+        <div th:if="${customerNotFound}" class="alert alert-danger" role="alert">
+            No customer found with this Username.
+        </div>
+
+        <div th:unless="${customerNotFound}" class="container-fluid">
+            <br>
+            <br>
+
+            <div class="row">
+                <div class="col-md-6 offset-md-1">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#orders" role="tab">Orders</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#addresses" role="tab">Addresses</a>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="orders" role="tabpanel">
+                            <br>
+                            <div class="cnt-tbl-customer-details">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Order No.</th>
+                                            <th scope="col">Total Price</th>
+                                            <th scope="col">Date</th>
+                                            <th scope="col">Action(s)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="order : ${orders}">
+                                            <td>
+                                                <a th:text="${order.orderNumber}" th:href="@{'/order/' + ${order.orderNumber}}"></a>
+                                            </td>
+                                            <td th:text="${#numbers.formatDecimal(order.price, 1, 'DEFAULT', 2, 'DEFAULT')} + '€'"></td>
+                                            <td th:text="${#temporals.format(order.date, 'dd MMM yyyy')}"></td>
+                                            <td>
+                                                <button type="button" class="btn btn-primary btn-regenerate-invoice" th:attr="data-order-number=${order.orderNumber}">Regenerate Invoice</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="addresses" role="tabpanel">
+                            <br>
+                            <div class="cnt-tbl-customer-details">
+                                <table id="tbl-crates" class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Street</th>
+                                            <th scope="col">House No.</th>
+                                            <th scope="col">Postal Code</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="address : ${addresses}">
+                                            <td th:text="${address.name}"></td>
+                                            <td th:text="${address.street}"></td>
+                                            <td th:text="${address.houseNumber}"></td>
+                                            <td th:text="${address.postalCode}"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+
+                <div class="col-md-3 offset-md-1">
+                    <div class="card">
+                        <h3>Customer Details</h3>
+
+                        <table class="tbl-details">
+                            <tbody>
+                                <tr>
+                                    <td><strong>Username:</strong></td>
+                                    <td th:text="${customer.username}"></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>FirstName:</strong></td>
+                                    <td th:text="${customer.firstName}"></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Lastname:</strong></td>
+                                    <td th:text="${customer.lastName}"></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Birthday:</strong></td>
+                                    <td th:text="${#temporals.format(customer.birthday, 'dd MMM yyyy')}"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:replace="fragments/footer :: footer"></div>
+    </body>
+
+    <script>
+        $('.btn-regenerate-invoice').click(function () {
+            regenerateInvoice($(this).data('order-number'));
+        });
+    </script>
+</html>

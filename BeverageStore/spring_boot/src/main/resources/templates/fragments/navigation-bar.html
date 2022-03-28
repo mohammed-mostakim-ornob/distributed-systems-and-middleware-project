@@ -1,0 +1,54 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5" lang="en">
+    <head>
+    <body>
+        <nav sec:authorize="isAuthenticated()" class="navbar navbar-expand-lg navbar-dark bg-dark" th:fragment="navigation-bar">
+            <a class="navbar-brand" th:href="@{/}">Beverage Store</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li id="home" class="nav-item active">
+                        <a class="nav-link" th:href="@{/home}">Home</span></a>
+                    </li>
+
+                    <li id="bottles" class="nav-item dropdown">
+                        <a class="nav-link" th:href="@{/beverage/bottle}">Bottles</a>
+                    </li>
+
+                    <li id="crates" class="nav-item">
+                        <a class="nav-link" th:href="@{/beverage/crate}">Crates</a>
+                    </li>
+
+                    <li sec:authorize="hasRole(T(de.uniba.dsg.beverage_store.spring_boot.model.db.Role).ROLE_MANAGER.name())" id="order" class="nav-item">
+                        <a class="nav-link" th:href="@{/order}">Orders</a>
+                    </li>
+
+                    <li sec:authorize="hasRole(T(de.uniba.dsg.beverage_store.spring_boot.model.db.Role).ROLE_MANAGER.name())" id="customer" class="nav-item">
+                        <a class="nav-link" th:href="@{/customer}">Customers</a>
+                    </li>
+
+                    <li sec:authorize="hasRole(T(de.uniba.dsg.beverage_store.spring_boot.model.db.Role).ROLE_CUSTOMER.name())" id="cart" class="nav-item">
+                        <span id="badge-cart-item-count" class="badge badge-pill badge-primary" style="float:right;margin-bottom:-10px;">0</span>
+                        <a class="nav-link" th:href="@{/cart}">Cart</a>
+                    </li>
+                </ul>
+
+                <ul class="navbar-nav ml-auto mr-5">
+                    <li id="user" class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" data-toggle="dropdown" onclick="return false;"
+                           th:text="${'Hello, ' + #authentication.principal.firstName + ' ' + #authentication.principal.lastName}"></a>
+                        <div class="dropdown-menu">
+                            <a sec:authorize="hasRole(T(de.uniba.dsg.beverage_store.spring_boot.model.db.Role).ROLE_CUSTOMER.name())" class="dropdown-item" th:href="@{/order}">Orders</a>
+                            <a sec:authorize="hasRole(T(de.uniba.dsg.beverage_store.spring_boot.model.db.Role).ROLE_CUSTOMER.name())" class="dropdown-item" th:href="@{/address}">Addresses</a>
+                            <a id="lnk-logout" class="dropdown-item">Logout</a>
+                        </div>
+                        <form id="form-logout" method="POST" th:action="@{/logout}"></form>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </body>
+</html>

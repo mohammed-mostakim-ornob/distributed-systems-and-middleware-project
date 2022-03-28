@@ -1,0 +1,61 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "com.github.jengelman.gradle.plugins:shadow:5.2.0"
+    }
+}
+
+plugins {
+    id 'org.springframework.boot' version '2.4.0'
+    id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+    id 'java'
+}
+
+group = 'de.uniba.dsg'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11.0'
+targetCompatibility = '11.0'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+shadowJar {
+    mergeServiceFiles()
+}
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    invoker
+}
+
+dependencies {
+    compile project(':shared')
+
+    implementation 'com.google.cloud.functions:functions-framework-api:1.0.1'
+
+    compile group: 'org.thymeleaf', name: 'thymeleaf', version: '3.0.12.RELEASE'
+    compile group: 'org.xhtmlrenderer', name: 'flying-saucer-pdf', version: '9.1.20'
+
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.12.1'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.12.1'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.12.1'
+
+    invoker 'com.google.cloud.functions.invoker:java-function-invoker:1.0.0-alpha-2-rc5'
+}
+
+tasks.register("runFunction", JavaExec) {
+    main = 'com.google.cloud.functions.invoker.runner.Invoker'
+    classpath(configurations.invoker)
+    inputs.files(configurations.runtimeClasspath, sourceSets.main.output)
+    // override this defaults by cli arguments or directly in the build here, if the commands are static
+    args(
+            '--target', project.findProperty('runFunction.target') ?: 'de.uniba.dsg.cloudfunction.InvoiceGeneratorFunction',
+            '--port', project.findProperty('runFunction.port') ?: 8080
+    )
+    doFirst {
+        args('--classpath', files(configurations.runtimeClasspath, sourceSets.main.output).asPath)
+    }
+}

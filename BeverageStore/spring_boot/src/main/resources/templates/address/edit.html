@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="fragments/header :: header"></head>
+    <body>
+        <div th:replace="fragments/navigation-bar :: navigation-bar"></div>
+
+        <div th:if="${addressNotFound == true}" class="alert alert-danger" role="alert">
+            No address found with this ID.
+        </div>
+
+        <div class="container">
+            <br>
+            <div class="row">
+                <div class="col-md-4 offset-md-4">
+                    <a th:href="@{/address}">Return to addresses</a>
+                </div>
+            </div>
+            <br>
+            <div th:unless="${addressNotFound == true}" class="row">
+                <div class="col-md-4 offset-md-4">
+                    <div class="card">
+                        <h3>Edit Address</h3>
+                        <br>
+
+                        <form method="POST" th:action="@{/address/edit/{id}(id=${addressId})}" th:object="${addressDTO}">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="name">Name</label>
+                                        <input id="name" class="form-control" type="text" th:field="*{name}" />
+                                        <small class="form-text text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="street">Street</label>
+                                        <input id="street" class="form-control" type="text" th:field="*{street}" />
+                                        <small class="form-text text-danger" th:if="${#fields.hasErrors('street')}" th:errors="*{street}"></small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="house-number">House Number</label>
+                                        <input id="house-number" class="form-control" type="text" th:field="*{houseNumber}" />
+                                        <small class="form-text text-danger" th:if="${#fields.hasErrors('houseNumber')}" th:errors="*{houseNumber}"></small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="postal-code">Postal Code</label>
+                                        <input id="postal-code" class="form-control" type="number" th:field="*{postalCode}" />
+                                        <small class="form-text text-danger" th:if="${#fields.hasErrors('postalCode')}" th:errors="*{postalCode}"></small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button class="btn btn-primary btn-block" type="submit">Update</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:replace="fragments/footer :: footer"></div>
+    </body>
+</html>

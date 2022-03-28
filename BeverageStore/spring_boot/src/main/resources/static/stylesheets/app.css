@@ -1,0 +1,161 @@
+#cnt-login-form {
+    width: 300px;
+    margin: 200px auto;
+}
+
+.nav-tabs .nav-item .nav-link {
+    font-size: 30px;
+}
+
+footer {
+    text-align: center;
+    font-weight: bold;
+    background: white;
+    border: 0;
+}
+
+footer a {
+    color: black;
+}
+
+footer a:hover {
+    text-decoration: none;
+}
+
+.tbl-details {
+    width: 100%;
+    font-size: 15px;
+}
+
+.cnt-tbl-beverages {
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 750px;
+}
+
+#cnt-tbl-cart {
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 750px;
+}
+
+#cnt-tbl-orders {
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 730px;
+}
+
+#cnt-tbl-customers {
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 730px;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+#cnt-tbl-order-items {
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 730px;
+}
+
+#btn-submit-order {
+    margin-top: 18px;
+}
+
+.alert-danger {
+    text-align: center;
+}
+
+a {
+    cursor: pointer;
+}
+
+.txt-page-center {
+    text-align: center;
+    margin-top: 400px;
+}
+
+#cnt-pagination-controls {
+    width: 25%;
+    margin: auto;
+}
+
+.pagination-controls {
+    width: 40px;
+    margin: 5px;
+    color: white!important;
+}
+
+#cnt-pagination-controls #txt-page-number {
+    margin: 5px;
+    display: inline;
+}
+
+#form-logout {
+    display: none;
+}
+
+.nav-item#user {
+    width: 150px;
+}
+
+.nav-item#user .nav-link {
+    text-align: right;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+#cnt-tbl-address {
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 730px;
+}
+
+#screen-blocker {
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    width:100%;
+    height:100%;
+    display: none;
+    z-index: 99999;
+    position:absolute;
+    background-color: rgba(255,255,255,0.5);
+}
+
+#screen-blocker #spinner {
+    width: 50px;
+    height: 50px;
+    display: block;
+    margin: 450px auto 0;
+}
+
+.card {
+    width: 100%;
+    padding: 30px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 1px 1px 6px rgba(0,0,0,.16);
+}
+
+#btn-submit-order {
+    height: 58px;
+}
+
+.nav-tabs .nav-item .nav-link {
+    font-size: 25px;
+}
+
+.cnt-tbl-customer-details {
+    max-height: 700px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}

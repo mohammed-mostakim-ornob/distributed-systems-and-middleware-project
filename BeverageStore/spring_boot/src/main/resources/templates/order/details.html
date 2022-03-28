@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+    <head th:replace="fragments/header :: header"></head>
+    <body>
+        <div th:replace="fragments/navigation-bar :: navigation-bar"></div>
+
+        <div th:if="${orderNotFound == true}" class="alert alert-danger" role="alert">
+            No order found with this Order Number.
+        </div>
+
+        <div class="container-fluid">
+            <br>
+            <a th:href="@{/order}">Return to orders</a>
+            <br>
+            <br>
+            <div th:unless="${orderNotFound == true}" class="row">
+                <div class="col-md-9">
+                    <div class="card">
+                        <h3>Items</h3>
+                        <br>
+
+                        <div id="cnt-tbl-order-items">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Pos</th>
+                                        <th scope="col">Image</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Type</th>
+                                        <th scope="col">Volume</th>
+                                        <th scope="col">Volume Percent</th>
+                                        <th scope="col">Is Alcoholic</th>
+                                        <th scope="col">No. of Bottles</th>
+                                        <th scope="col">Supplier</th>
+                                        <th scope="col">Quantity</th>
+                                        <th scope="col">Price</th>
+                                        <th scope="col">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="item : ${orderItems}">
+                                        <td th:text="${item.position}"></td>
+                                        <td>
+                                            <img width="120" th:src="${item.beverageType == T(de.uniba.dsg.beverage_store.spring_boot.model.BeverageType).BOTTLE}
+                                                ? ${item.bottle.picUrl}
+                                                : ${item.crate.picUrl}">
+                                        </td>
+                                        <td th:text="${item.beverageType == T(de.uniba.dsg.beverage_store.spring_boot.model.BeverageType).BOTTLE}
+                                            ? ${item.bottle.name}
+                                            : ${item.crate.name}">
+                                        </td>
+                                        <td th:text="${item.beverageType == T(de.uniba.dsg.beverage_store.spring_boot.model.BeverageType).BOTTLE}
+                                            ? 'Bottle'
+                                            : 'Crate'">
+                                        </td>
+                                        <td th:text="${item.beverageType == T(de.uniba.dsg.beverage_store.spring_boot.model.BeverageType).BOTTLE}
+                                            ? ${#numbers.formatDecimal(item.bottle.volume, 1, 'DEFAULT', 2, 'DEFAULT')}
+                                            : '--'">
+                                        </td>
+                                        <td th:text="${item.beverageType == T(de.uniba.dsg.beverage_store.spring_boot.model.BeverageType).BOTTLE}
+                                            ? (${#numbers.formatDecimal(item.bottle.volumePercent, 1, 'DEFAULT', 2, 'DEFAULT')} + '%')
+                                            : '--'">
+                                        </td>
+                                        <td th:text="${item.beverageType == T(de.uniba.dsg.beverage_store.spring_boot.model.BeverageType).BOTTLE}
+                                            ? (${item.bottle.volumePercent > 0}
+                                                ? 'Yes'
+                                                : 'No')
+                                            : '--'">
+                                        </td>
+                                        <td th:text="${item.beverageType == T(de.uniba.dsg.beverage_store.spring_boot.model.BeverageType).CRATE}
+                                            ? ${item.crate.noOfBottles}
+                                            : '--'">
+                                        </td>
+                                        <td th:text="${item.beverageType == T(de.uniba.dsg.beverage_store.spring_boot.model.BeverageType).BOTTLE}
+                                            ? ${item.bottle.supplier}
+                                            : '--'">
+                                        </td>
+                                        <td th:text="${item.quantity}"></td>
+                                        <td th:text="${item.beverageType == T(de.uniba.dsg.beverage_store.spring_boot.model.BeverageType).BOTTLE}
+                                            ? ${#numbers.formatDecimal(item.bottle.price, 1, 'DEFAULT', 2, 'DEFAULT')} + '€'
+                                            : ${#numbers.formatDecimal(item.crate.price, 1, 'DEFAULT', 2, 'DEFAULT')} + '€'">
+                                        </td>
+                                        <td th:text="${item.beverageType == T(de.uniba.dsg.beverage_store.spring_boot.model.BeverageType).BOTTLE}
+                                            ? ${#numbers.formatDecimal((item.quantity * item.bottle.price), 1, 'DEFAULT', 2, 'DEFAULT')} + '€'
+                                            : ${#numbers.formatDecimal((item.quantity * item.crate.price), 1, 'DEFAULT', 2, 'DEFAULT')} + '€'">
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <h3>Details</h3>
+                                <br>
+
+                                <table class="tbl-details">
+                                    <tbody>
+                                        <tr sec:authorize="hasRole(T(de.uniba.dsg.beverage_store.spring_boot.model.db.Role).ROLE_MANAGER.name())">
+                                            <td>Customer Name:</td>
+                                            <td>
+                                                <a th:text="${order.user.firstName + ' ' +  order.user.lastName}"
+                                                   th:href="@{'/customer/' + ${order.user.username}}"></a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Order Number:</td>
+                                            <td th:text="${order.orderNumber}"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Date:</td>
+                                            <td th:text="${#temporals.format(order.date, 'dd MMM yyyy')}"></td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>Total Price:</td>
+                                            <td th:text="${#numbers.formatDecimal(order.price, 1, 'DEFAULT', 2, 'DEFAULT')} + '€'"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <br>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <h3>Delivery Address</h3>
+                                <br>
+
+                                <p th:text="${order.deliveryAddress.name}"></p>
+                                <p th:text="${order.deliveryAddress.street} + ' ' + ${order.deliveryAddress.houseNumber} + ', ' + ${order.deliveryAddress.postalCode}"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <br>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <h3>Billing Address</h3>
+                                <br>
+
+                                <p th:text="${order.billingAddress.name}"></p>
+                                <p th:text="${order.billingAddress.street} + ' ' + ${order.billingAddress.houseNumber} + ', ' + ${order.billingAddress.postalCode}"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:replace="fragments/footer :: footer"></div>
+    </body>
+</html>

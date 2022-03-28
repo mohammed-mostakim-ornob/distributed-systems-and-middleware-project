@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="fragments/header :: header"></head>
+    <body>
+        <div th:replace="fragments/navigation-bar :: navigation-bar"></div>
+
+        <div th:if="${hasServerError == true}" class="alert alert-danger" role="alert">
+            Unexpected error in creating the order.
+        </div>
+
+        <div th:if="${isEmptyCart == true}" class="alert alert-danger" role="alert">
+            At least one Cart Item is required for checkout.
+        </div>
+
+        <div class="container">
+            <br>
+
+            <form method="POST" th:if="${isEmptyCart == false}" th:action="@{/cart/checkout}" th:object="${submitOrderDTO}">
+                <div class="row">
+                    <div class="col-md-7">
+                        <div class="card">
+                            <h3>Addresses</h3>
+                            <br>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="deliveryAddressId">Delivery Address</label>
+                                        <select th:field="*{deliveryAddressId}" id="deliveryAddressId" class="form-control">
+                                            <option value="0" disabled selected>Select Delivery Address</option>
+                                            <option th:each="address : ${addressesDropdownListItems}" th:value="${address.id}" th:text="${address.label}"></option>
+                                        </select>
+                                        <small class="form-text text-danger" th:if="${#fields.hasErrors('deliveryAddressId')}" th:errors="*{deliveryAddressId}"></small>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="billingAddressId">Billing Address</label>
+                                        <select th:field="*{billingAddressId}" id="billingAddressId" class="form-control">
+                                            <option value="0" disabled selected>Select Billing Address</option>
+                                            <option th:each="address : ${addressesDropdownListItems}" th:value="${address.id}" th:text="${address.label}"></option>
+                                        </select>
+                                        <small class="form-text text-danger" th:if="${#fields.hasErrors('billingAddressId')}" th:errors="*{billingAddressId}"></small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p id="txt-deliveryAddress"></p>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <p id="txt-billingAddress"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="card">
+                            <h3>Details</h3>
+                            <br>
+
+                            <table class="tbl-details">
+                                <tbody>
+                                    <tr>
+                                        <td>Total Item(s):</td>
+                                        <td th:text="${cartItemCount}"></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Total Price:</td>
+                                        <td th:text="${#numbers.formatDecimal(cartTotal, 1, 'DEFAULT', 2, 'DEFAULT')} + '€'"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <button id="btn-submit-order" type="submit" class="btn btn-primary btn-block">Submit</button>
+                    </div>
+
+                    <div class="col-md-2">
+
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div th:replace="fragments/footer :: footer"></div>
+    </body>
+
+    <script type="text/javascript" th:inline="javascript">
+    /*<![CDATA[*/
+        let addressesDropdownListItems = [[${addressesDropdownListItems}]];
+
+        $(document).ready(() => {
+            updateDeliveryAddress();
+            updateBillingAddress();
+        });
+
+        $('select[name="deliveryAddressId"]').change(updateDeliveryAddress);
+        $('select[name="billingAddressId"]').change(updateBillingAddress);
+
+        function updateDeliveryAddress() {
+            $('#txt-deliveryAddress').text(getAddressText($('select[name="deliveryAddressId"]').val()));
+        }
+
+        function updateBillingAddress() {
+            $('#txt-billingAddress').text(getAddressText($('select[name="billingAddressId"]').val()));
+        }
+
+        function getAddressText(selectedAddressId) {
+            selectedAddressId = parseInt(selectedAddressId);
+
+            if (isNaN(selectedAddressId) || parseInt(selectedAddressId) < 1) {
+                return "No address is selected.";
+            }
+
+            let address = addressesDropdownListItems.filter((a) => {
+                return a.id === selectedAddressId;
+            })[0];
+
+            return address.description;
+        }
+    /*]]>*/
+    </script>
+</html>

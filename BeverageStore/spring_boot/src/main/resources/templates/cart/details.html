@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="fragments/header :: header"></head>
+    <body>
+        <div th:replace="fragments/navigation-bar :: navigation-bar"></div>
+
+        <div th:replace="fragments/screen-blocker :: screen-blocker"></div>
+
+        <div class="container-fluid">
+            <br>
+            <div class="row">
+                <div class="col-md-9">
+                    <div class="card">
+                        <h3>Cart Items</h3>
+                        <br>
+
+                        <div id="cnt-tbl-cart">
+                            <table id="tbl-cart" class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th scope="col">Image</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Type</th>
+                                    <th scope="col">Volume</th>
+                                    <th scope="col">Volume Percent</th>
+                                    <th scope="col">Is Alcoholic</th>
+                                    <th scope="col">No. of Bottles</th>
+                                    <th scope="col">Supplier</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Total</th>
+                                    <th scope="col">Action(s)</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="item : ${cartItems}" th:attr="data-id=${item.cartItemId}">
+                                        <td>
+                                            <img width="120" th:src="${item.picUrl}">
+                                        </td>
+                                        <td th:text="${item.name}"></td>
+                                        <td th:text="${item.beverageType == T(de.uniba.dsg.beverage_store.spring_boot.model.BeverageType).BOTTLE}
+                                            ? 'Bottle'
+                                            : 'Crate'">
+                                        </td>
+                                        <td th:text="${item.beverageType == T(de.uniba.dsg.beverage_store.spring_boot.model.BeverageType).BOTTLE}
+                                            ? ${#numbers.formatDecimal(item.volume, 1, 'DEFAULT', 2, 'DEFAULT')}
+                                            : '--'">
+                                        </td>
+                                        <td th:text="${item.beverageType == T(de.uniba.dsg.beverage_store.spring_boot.model.BeverageType).BOTTLE}
+                                            ? (${#numbers.formatDecimal(item.volumePercent, 1, 'DEFAULT', 2, 'DEFAULT')} + '%')
+                                            : '--'">
+                                        </td>
+                                        <td th:text="${item.beverageType == T(de.uniba.dsg.beverage_store.spring_boot.model.BeverageType).BOTTLE}
+                                            ? (${item.volumePercent > 0}
+                                                ? 'Yes'
+                                                : 'No')
+                                            : '--'">
+                                        </td>
+                                        <td th:text="${item.beverageType == T(de.uniba.dsg.beverage_store.spring_boot.model.BeverageType).CRATE}
+                                            ? ${item.noOfBottle}
+                                            : '--'">
+                                        </td>
+                                        <td th:text="${item.beverageType == T(de.uniba.dsg.beverage_store.spring_boot.model.BeverageType).BOTTLE}
+                                            ? ${item.supplier}
+                                            : '--'">
+                                        </td>
+                                        <td th:text="${item.quantity}"></td>
+                                        <td th:text="${#numbers.formatDecimal(item.price, 1, 'DEFAULT', 2, 'DEFAULT')} + '€'"></td>
+                                        <td th:text="${#numbers.formatDecimal((item.quantity * item.price), 1, 'DEFAULT', 2, 'DEFAULT')} + '€'"></td>
+                                        <td>
+                                            <button type="button" class="btn btn-primary btn-remove-cart-item" th:attr="data-id=${item.cartItemId}">Remove</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="card">
+                        <h3>Cart Details</h3>
+                        <br>
+
+                        <table class="tbl-details">
+                            <tbody>
+                                <tr>
+                                    <td>Total Item(s):</td>
+                                    <td id="txt-cart-item-count" th:text="${cartItemCount}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Total Price:</td>
+                                    <td id="txt-cart-total" th:text="${#numbers.formatDecimal(cartTotal, 1, 'DEFAULT', 2, 'DEFAULT')} + '€'"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <br>
+
+                        <a id="lnk-checkout" class="btn btn-primary btn-block"
+                           th:href="@{/cart/checkout}"
+                           th:classappend="${cartItemCount == 0} ? 'disabled' : ''">Checkout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:replace="fragments/footer :: footer"></div>
+    </body>
+
+    <script>
+        $('.btn-remove-cart-item').click(function () {
+            let cartItemId = parseInt($(this).data('id'));
+
+            removeItemFromCart(cartItemId, () => {
+               $('#tbl-cart tbody').children('[data-id="' + cartItemId + '"]').remove();
+
+                if ($('#tbl-cart tbody tr').length == 0) {
+                    $('#lnk-checkout').addClass('disabled');
+                }
+           });
+        });
+    </script>
+</html>

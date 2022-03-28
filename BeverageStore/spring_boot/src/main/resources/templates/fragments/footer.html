@@ -1,0 +1,9 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+    <head>
+    <body>
+        <footer class="fixed-bottom" th:fragment="footer">
+        <h4><a th:href="@{/}" th:text="'© ' + ${#dates.year(#dates.createNow())} + ' Beverage Store'"></a></h4>
+    </footer>
+    </body>
+</html>

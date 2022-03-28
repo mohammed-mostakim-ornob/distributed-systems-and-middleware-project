@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+    <head th:replace="fragments/header :: header"></head>
+    <body>
+
+        <div th:if="${hasServerError == true}" class="alert alert-danger" role="alert">
+            Unexpected server error.
+        </div>
+
+        <div th:if="${hasConflictError == true}" th:text="${conflictErrorMessage}" class="alert alert-danger" role="alert"></div>
+
+        <div class="container">
+            <br>
+            <br>
+            <div class="row">
+                <div class="col-md-8 offset-md-2">
+                    <div class="card">
+                        <h3>Register as Customer</h3>
+                        <br>
+
+                        <form method="POST" th:action="@{/register/customer}" th:object="${customerDTO}">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="first-name">First Name</label>
+                                        <input id="first-name" class="form-control" type="text" th:field="*{firstName}" />
+                                        <small class="form-text text-danger" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></small>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="last-name">Last Name</label>
+                                        <input id="last-name" class="form-control" type="text" th:field="*{lastName}" />
+                                        <small class="form-text text-danger" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="username">Username</label>
+                                        <input id="username" class="form-control" type="text" th:field="*{username}" />
+                                        <small class="form-text text-danger" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></small>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="email">Email</label>
+                                        <input id="email" class="form-control" type="text" th:field="*{email}" />
+                                        <small class="form-text text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="password">Password</label>
+                                        <input id="password" class="form-control" type="password" th:field="*{password}" />
+                                        <small class="form-text text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></small>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="repeat-password">Repeat Password</label>
+                                        <input id="repeat-password" class="form-control" type="password" th:field="*{repeatPassword}" />
+                                        <small class="form-text text-danger" th:if="${#fields.hasErrors('repeatPassword')}" th:errors="*{repeatPassword}"></small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="birthday">Birthday</label>
+                                        <input id="birthday" class="form-control" type="date" th:field="*{birthday}" th:value="*{birthday}" />
+                                        <small class="form-text text-danger" th:if="${#fields.hasErrors('birthday')}" th:errors="*{birthday}"></small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <button class="btn btn-primary btn-block" type="submit">Register</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:replace="fragments/footer :: footer"></div>
+    </body>
+</html>

@@ -1,0 +1,15 @@
+runtime: java11
+
+env_variables:
+  SPRING_PROFILES_ACTIVE: 'common, postgres, gcp'
+
+resources:
+  cpu: 2
+  memory_gb: 2
+  disk_size_gb: 10
+  volumes:
+    - name: ramdisk1
+      volume_type: tmpfs
+      size_gb: 0.5
+manual_scaling:
+  instances: 1
